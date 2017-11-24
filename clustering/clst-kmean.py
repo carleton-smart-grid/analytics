@@ -2,8 +2,8 @@
 #
 # Class:             clst-kmean.py
 # Author:            Jason Van Kerkhoven
-# Date of Update:    14/10/2017
-# Version:           1.0.0
+# Date of Update:    24/11/2017
+# Version:           1.0.1
 #
 # Purpose:           TODO
 #
@@ -17,7 +17,7 @@
 # Flags:             -v         ==> toggles verbose on [use -vv for extra verbose]
 #                    -p         ==> disable using multiple cores, default use all cores
 #                    -k int     ==> set k value, default 10
-#                    -l int     ==> number of full algorithm run-loops, default 1
+#                    -l int     ==> number of full algorithm runs, default 1
 #                    -i int     ==> max iterations per algorithm executions, default 500
 #                    -f str     ==> set path for figure dump, default use current directory
 #
@@ -32,6 +32,7 @@ import sqlite3
 import time
 import matplotlib.pyplot as plotter
 import matplotlib.dates as dates
+import platform
 
 
 
@@ -44,6 +45,16 @@ def printv(string):
     if verbose:
         print(string)
 
+# beep#
+def beep(freq, dur):
+    # for windows
+    if (platform.system() == 'Windows'):
+        import winsound
+        winsound.Beep(freq, dur*1000)
+    # linux and mac OS
+    else:
+        import os
+        os.system('play --no-show-progress --null --channels 1 synth %s sine %f' % (dur, freq))
 
 
 
@@ -134,12 +145,12 @@ printv('Done! ' + str(len(dataset)) + ' data points found')
 
 # caluclate centroids
 printv('Computing k-mean centroids...')
-runTime = time.clock();
+runTime = time.time();
 kmeans = KMeans(n_clusters=k, n_init=maxl, max_iter=maxi, verbose=xtrv, n_jobs=cpu, tol=0.0001).fit(dataset)
 printv('Av. Inertia:   ' + str(kmeans.inertia_))
-runTime = time.clock() - runTime
+runTime = time.time() - runTime
 printv('Done!')
-printv('Time to completion: ' + str(runTime) + 's')
+printv('Computation time: %.4f sec' % runTime)
 
 # save to db
 printv('Saving to database...')
@@ -165,3 +176,6 @@ plotter.savefig(figPath+'figure_'+tableName+'.png', format='png', bbox_inches='t
 printv('Done!')
 if verbose:
     plotter.show()
+
+# notify
+beep(440, 2)
