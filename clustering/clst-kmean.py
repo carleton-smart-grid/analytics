@@ -3,7 +3,7 @@
 # Class:             clst-kmean.py
 # Author:            Jason Van Kerkhoven
 # Date of Update:    24/11/2017
-# Version:           1.0.1
+# Version:           1.0.2
 #
 # Purpose:           TODO
 #
@@ -16,6 +16,7 @@
 #
 # Flags:             -v         ==> toggles verbose on [use -vv for extra verbose]
 #                    -p         ==> disable using multiple cores, default use all cores
+#                    -a         ==> enable audible beeping for completion
 #                    -k int     ==> set k value, default 10
 #                    -l int     ==> number of full algorithm runs, default 1
 #                    -i int     ==> max iterations per algorithm executions, default 500
@@ -45,7 +46,15 @@ def printv(string):
     if verbose:
         print(string)
 
-# beep#
+# beep 'done' in morse code at aprox. 20wpm
+def beepbeep(freq):
+    for blip in (True,False,False,True,True,True,True,False,False):
+        if (blip):
+            beep(freq, 0.2)
+        else:
+            beep(freq, 0.1)
+
+# beep
 def beep(freq, dur):
     # for windows
     if (platform.system() == 'Windows'):
@@ -71,6 +80,7 @@ maxl = 1
 maxi = 300
 cpu = -1
 figPath = ''
+beepFlag = False
 
 # load arguments
 printv('Running ' + sys.argv[0] + ' ...')
@@ -89,7 +99,7 @@ while (len(flags) > 0):
     if flag == '-v':
         verbose = True
     # extra verbose flag
-    if flag == '-vv':
+    elif flag == '-vv':
         xtrv = 1
         verbose = True
     # set k
@@ -107,6 +117,9 @@ while (len(flags) > 0):
     # set path for figure
     elif flag == '-f':
         figPath = flags.pop(0)+'/'
+    # enable beeps (good for long jobs)
+    elif flag == '-b':
+        beepFlag = True
 
 # print starting details
 printv('------------------------------------------')
@@ -174,8 +187,9 @@ p1.set_ylabel('Usage (kWh)')
 print(figPath+'figure_'+tableName+'.png')
 plotter.savefig(figPath+'figure_'+tableName+'.png', format='png', bbox_inches='tight')
 printv('Done!')
+
+# notify and show figure
+if(beepFlag):
+    beepbeep(550)
 if verbose:
     plotter.show()
-
-# notify
-beep(440, 2)
