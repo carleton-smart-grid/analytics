@@ -118,7 +118,7 @@ while (len(flags) > 0):
     elif flag == '-f':
         figPath = flags.pop(0)+'/'
     # enable beeps (good for long jobs)
-    elif flag == '-b':
+    elif flag == '-a':
         beepFlag = True
 
 # print starting details
