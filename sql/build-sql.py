@@ -2,12 +2,14 @@
 #
 # Class:             build-sql.py
 # Author:            Jason Van Kerkhoven
-# Date of Update:    22/11/2017
-# Version:           1.0.0
+# Date of Update:    28/11/2017
+# Version:           1.0.1
 #
-# Purpose:           Generate SQL files from CSV rawdata
+# Purpose:           Generate SQL files from CSV rawdata.
 #
-# Arugments:         ~PATH/usagedat.csv
+# Arugments:         ~PATH/usagedat.csv ~PATH/output.sql
+#
+# Flags:             -d yyyy-mm-dd      ==> stop sql at date (exclusive)
 #
 ##############################################################################
 
@@ -24,6 +26,18 @@ YEAR_CONSTANT = '20'
 # call pathing arguments ~PATH/usagedat.csv
 # get program arguments
 csvPath = sys.argv[1]
+fileName = sys.argv[2]
+
+# check for flags
+endDate = None
+flags = sys.argv
+for i in range(0, 3):
+    del flags[0]
+while (len(flags) > 0):
+    flag = flags.pop(0)
+    if (flag == '-d'):
+        endDate = str(flags.pop(0))
+
 
 # open the csv file and skip headers, get file newline size
 csvFile = open(csvPath, 'r')
@@ -31,7 +45,7 @@ reader = csv.reader(csvFile)
 current = next(reader, None)
 
 # create/open/setup file for writing
-sqlFile = open('populate-12m.sql', 'w')
+sqlFile = open(fileName, 'w')
 sqlFile.write('DROP TABLE IF EXISTS usages;\n')
 sqlFile.write('CREATE TABLE usages (time_stamp INTEGER, house_id INTEGER, usage NUMERIC);\n');
 #sqlFile.write('CREATE TABLE usages (date DATE, time TIME, house_id INTEGER, usage NUMERIC);\n');
@@ -48,6 +62,10 @@ while(current != None):
     dateTime = timeRaw.split(' ')
     dmy = dateTime[0].split('-')
     dateFormated = YEAR_CONSTANT + dmy[2] + '-' + dmy[1] + '-' + dmy[0]
+
+    # check terminating
+    if (dateFormated == endDate):
+        break;
 
     # insert each houseIDs usages (1, 2, 3, 4, 5)
     for id in range(1, 6):
