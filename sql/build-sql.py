@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Class:             build-sql.py
+# Program:           build-sql.py
 # Author:            Jason Van Kerkhoven
 # Date of Update:    28/11/2017
 # Version:           1.0.1
