@@ -1,6 +1,6 @@
 ##############################################################################
 #
-# Class:             clst-kmean.py
+# Program:           clst-kmean.py
 # Author:            Jason Van Kerkhoven
 # Date of Update:    24/11/2017
 # Version:           1.0.2
